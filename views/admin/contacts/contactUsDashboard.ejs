@@ -1,0 +1,54 @@
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+
+    <!-- Header with Search + Create Button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="margin: 0;"></h1>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- Search Box -->
+            <!-- <form method="GET" action="/admin/users" style="display: flex; gap: 5px;">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search requests..." 
+                    style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;"
+                >
+                <button onmouseover="this.style.backgroundColor='#7e57ff'" onmouseout="this.style.backgroundColor='#6200ee'" type="submit" style="padding: 6px 10px; background: #6200ee; color: white; border: none; border-radius: 4px;">
+                    Search
+                </button>
+            </form> -->
+
+           
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+        <thead style="background: #f5f5f5; text-align: left;">
+            <tr class="no-hover">
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Email</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Message</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% requests.forEach(request => { %>
+                <tr onmouseover="this.style.backgroundColor='#DCD0FF'" onmouseout="this.style.backgroundColor=''"  style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;"><%= request.email %></td>
+                    <td style="padding: 10px;"><%= request.message %></td>
+                    <td style="padding: 10px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <a href="/contact/<%= request.id %>" style="color: red; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    tr:not(.no-hover):hover {
+        background-color: #DCD0FF !important;
+      }
+      </style>

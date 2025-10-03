@@ -1,0 +1,328 @@
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="margin: 0;"></h1>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- Search Box -->
+            <form method="GET" action="/admin/users" style="display: flex; gap: 5px;">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search users..." 
+                    value="<%= search %>"
+                    style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;"
+                >
+                <button onmouseover="this.style.backgroundColor='#7e57ff'" onmouseout="this.style.backgroundColor='#6200ee'" type="submit" style="padding: 6px 10px; background: #6200ee; color: white; border: none; border-radius: 4px;">
+                    Search
+                </button>
+            </form>
+
+            <!-- Create New User Button -->
+            <button 
+                id="createUserBtn"
+                style="padding: 6px; background: #6200ee; color: white; border-radius: 4px; border: none; cursor: pointer;"
+                onmouseover="this.style.backgroundColor='#7e57ff'" onmouseout="this.style.backgroundColor='#6200ee'"
+            >
+                Create New User
+            </button>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+        <thead style="background: #f5f5f5; text-align: left;">
+            <tr class="no-hover">
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Id</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Name</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Email</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Role</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr onmouseover="this.style.backgroundColor='#DCD0FF'" 
+                onmouseout="this.style.backgroundColor=''"
+                style="border-bottom: 1px solid #eee; cursor: pointer;">
+                    <td style="padding: 10px;"><%= user.id %></td>
+                    <td style="padding: 10px;"><%= user.name %></td>
+                    <td style="padding: 10px;"><%= user.email %></td>
+                    <td style="padding: 10px;"><%= user.role %></td>
+                    <td style="padding: 10px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button class="editUserBtn" data-id="<%= user.id %>" data-name="<%= user.name %>" data-email="<%= user.email %>" data-role="<%= user.role %>" data-password="<%= user.password %>" style="color: #0073aa; background:none; border:none; cursor:pointer;">
+                                Edit
+                            </button>
+                            <span style="color: #ccc;">|</span>
+                            <form action="/users/<%= user.id %>" method="POST" style="display:inline;">
+                                <input type="hidden" name="_method" value="DELETE" />
+                                <button type="submit" style="color:red; background:none; border:none; padding:0; text-decoration:none;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Create User Modal -->
+<div id="createUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('createUserModal')">&times;</span>
+        <h2>Create New User</h2>
+        <form id="createUserForm" method="POST" action="/admin/users/create" class="form">
+            <label>Name</label>
+            <input type="text" name="name" required class="input-field">
+
+            <label>Email</label>
+            <input type="email" name="email" required class="input-field">
+
+            <label>Password</label>
+            <input type="password" name="password" required class="input-field">
+            
+            <label for="createRole">Role</label>
+<select name="role" id="createRole" required class="input-field">
+    <option value="ADMIN">ADMIN</option>
+    <option value="USER">USER</option>
+</select>
+            <button type="submit" class="btn-primary">Create</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editUserModal')">&times;</span>
+        <h2>Edit User</h2>
+        <form id="editUserForm" method="POST" class="form">
+            <label>Name</label>
+            <input type="text" name="name" id="editName" required class="input-field">
+
+            <label>Email</label>
+            <input type="email" name="email" id="editEmail" required class="input-field">
+
+            <label>Password</label>
+            <input type="password" name="password" id="editPassword" required class="input-field">
+
+            <label for="editRole">Role</label>
+<select name="role" id="editRole" required class="input-field">
+    <option value="ADMIN">ADMIN</option>
+    <option value="USER">USER</option>
+</select>
+
+            <button type="submit" class="btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    tr:not(.no-hover):hover {
+        background-color: #DCD0FF !important;
+      }
+/* Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 80px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.1s ease;
+}
+
+.input-field:focus {
+    border-color: #6200ee;
+}
+
+/* Modal Content */
+.modal-content {
+    background: white;
+    margin: auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.1s ease-in-out;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    color: red;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: background 0.1s ease, color 0.1s ease;
+}
+
+.close:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: darkred;
+}
+
+/* Form Styling */
+.form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.1s ease;
+}
+.input-field:focus {
+    border-color: #6200ee;
+    outline: none;
+    box-shadow: 0 0 6px rgba(98,0,238,0.3);
+}
+
+/* Buttons */
+.btn-primary {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #6200ee;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+.btn-primary:hover {
+    background: #7e57ff;
+}
+
+/* Title */
+.modal-content h2 {
+    margin-top: 0;
+    color: #6200ee;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+
+
+<script>
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+// Create User modal
+document.getElementById("createUserBtn").onclick = function() {
+    document.getElementById("createUserModal").style.display = "block";
+};
+
+// Edit User modal
+document.querySelectorAll(".editUserBtn").forEach(btn => {
+    btn.onclick = function() {
+        const id = btn.dataset.id;
+        document.getElementById("editName").value = btn.dataset.name;
+        document.getElementById("editEmail").value = btn.dataset.email;
+        document.getElementById("editRole").value = btn.dataset.role;
+        document.getElementById("editPassword").value = btn.dataset.password;
+        document.getElementById("editUserForm").action =`/user/edit/${id}`;
+        document.getElementById("editUserModal").style.display = "block";
+    };
+});
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains("modal")) {
+        event.target.style.display = "none";
+    }
+};
+
+document.getElementById("editUserForm")?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const id = this.action.split("/").pop(); // if form action is /avatar/update/123
+
+    try {
+        const res = await fetch(`/user/update/${id}`, {
+            method: "PUT", // or PATCH if that’s what your backend expects
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+
+        if (res.ok) {
+            alert("User updated successfully");
+            location.reload(); // refresh to show updated avatar list
+        } else {
+            const text = await res.text();
+            alert("Error updating user: " + text);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error updating user");
+    }
+});
+
+document.getElementById("createUserForm").addEventListener("submit", async function (e) {
+    e.preventDefault(); 
+    
+    const name = this.name.value;
+    const email = this.email.value;
+    const role = this.role.value;
+    const password = this.password.value
+
+    try {
+        const res = await fetch("/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name, email, role, password }) // password required by backend
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            alert(data.status);
+            closeModal("createUserModal");
+            window.location.reload(); // Refresh to show the new user
+        } else {
+            const error = await res.json();
+            alert("Error: " + error.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error creating user");
+    }
+});
+</script>

@@ -1,0 +1,90 @@
+<aside
+  id="layout-menu"
+  class="layout-menu menu-vertical menu bg-menu-theme"
+  style="background: #6200ee !important"
+>
+  <!-- style="background: rgb(46 81 124) !important" -->
+  <div class="app-brand demo">
+    <a href="/admin/dashboard" class="app-brand-link">
+      <!--
+        <span class="app-brand-logo demo">
+          <img src="/assets/img/logo.png" alt="" style="background-color:rgb(46 81 124) !important">
+        </span>
+        -->
+      <span class="app-brand-text demo menu-text fw-bolder ms-2">Talk To</span>
+    </a>
+
+    <a
+      href="javascript:void(0);"
+      class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none"
+    >
+      <i class="bx bx-chevron-left bx-sm align-middle"></i>
+    </a>
+  </div>
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-1">
+    <!-- Dashboard -->
+    <li
+      class="menu-item <%= currentPath === '/admin/dashboard' ? 'active' : '' %>"
+    >
+      <a href="/admin/dashboard" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div data-i18n="Dashboard">Dashboard</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item <%= currentPath.startsWith('/admin/users') ? 'active' : '' %>"
+    >
+      <a href="/admin/users" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-user"></i>
+        <div data-i18n="Users">Users</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item <%= currentPath.startsWith('/admin/avatars') ? 'active' : '' %>"
+    >
+      <a href="/admin/avatars" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-user"></i>
+        <div data-i18n="Avatars">Avatars</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item <%= currentPath.startsWith('/admin/delete-request') ? 'active' : '' %> disabled"
+    >
+      <span class="menu-link disabled-link">
+        <i class="menu-icon tf-icons bx bx-user-minus"></i>
+        <div data-i18n="Delete Account Request">Delete Account Request</div>
+      </span>
+    </li>
+
+    <li
+      class="menu-item <%= currentPath === '/admin/contact-us' ? 'active' : '' %>"
+    >
+      <a href="/admin/contact-us" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-phone"></i>
+        <div data-i18n="Contact Us">Contact Us</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item <%= currentPath.startsWith('/admin/info-pages') ? 'active' : '' %>"
+    >
+      <a href="/admin/info-pages" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-cog"></i>
+        <div data-i18n="Info Pages">Info Pages</div>
+      </a>
+    </li>
+
+    <li class="menu-item">
+      <a href="/admin/logout" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-log-out"></i>
+        <div data-i18n="Log Out">Log Out</div>
+      </a>
+    </li>
+  </ul>
+</aside>

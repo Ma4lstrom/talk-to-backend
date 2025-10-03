@@ -1,0 +1,368 @@
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+
+    <!-- Header with Search + Create Button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="margin: 0;"></h1>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- Search Box -->
+            <!-- <form method="GET" action="/admin/avatar" style="display: flex; gap: 5px;">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search avatars..." 
+                    style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;"
+                >
+                <button onmouseover="this.style.backgroundColor='#7e57ff'" onmouseout="this.style.backgroundColor='#6200ee'"  type="submit" style="padding: 6px 10px; background: #6200ee; color: white; border: none; border-radius: 4px;">
+                    Search
+                </button>
+            </form> -->
+
+            <!-- Create New User Button
+            <a 
+            id="openCreateAvatar"
+            onmouseover="this.style.backgroundColor='#7e57ff'" onmouseout="this.style.backgroundColor='#6200ee'"
+                href="#" 
+                style=" padding: 6px;  background: #6200ee; color: white; border-radius: 4px; text-decoration: none; width: fit-content;"
+            >
+                Create New Avatar
+            </a> -->
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+        <thead style="background: #f5f5f5; text-align: left;">
+            <tr class="no-hover">
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Id</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">User Id</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Avatar Name</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Avatar Personality</th>
+                <th style="padding: 10px; border-bottom: 1px solid #ddd;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% avatars.forEach(avatar => { %>
+                <tr  onmouseover="this.style.backgroundColor='#DCD0FF'" 
+                onmouseout="this.style.backgroundColor=''"
+                style="border-bottom: 1px solid #eee; cursor: pointer;">
+                    <td style="padding: 10px;"><%= avatar.id %></td>
+                    <td style="padding: 10px;"><%= avatar.userId %></td>
+                    <td style="padding: 10px;"><%= avatar.name %></td>
+                    <td style="padding: 10px;"><%= avatar.personality %></td>
+                    <td style="padding: 10px;">
+                         <div style="display: flex; gap: 10px; align-items: center;">
+                            <a href="#"
+   onclick='openEditAvatarModal(<%- JSON.stringify(avatar) %>)'
+   style="color: #0073aa; text-decoration: none;">
+   Edit
+</a>
+                            <span style="color: #ccc;">|</span>
+                            <a href="#"
+   class="delete-avatar"
+   data-avatar-id="<%= avatar.id %>"
+   style="color: red; text-decoration: none;">
+   Delete
+</a>
+
+                        </div>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Avatar Modal
+<div id="createAvatarModal" class="modal">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal('createAvatarModal')">&times;</button>
+      <h2>Create New Avatar</h2>
+      <form id="createAvatarForm" class="form">
+        <label for="createName">Name:</label>
+        <input type="text" id="createName" name="name" class="input-field" required>
+  
+        <label for="createPersonality">Personality:</label>
+        <input type="text" id="createPersonality" name="personality" class="input-field" required>
+  
+        <label for="createUserId">User ID:</label>
+        <input type="number" id="createUserId" name="userId" class="input-field" required>
+  
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="submit" class="btn btn-primary">Create Avatar</button>
+          <button type="button" class="btn" onclick="closeModal('createAvatarModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div> -->
+  
+  <!-- Edit Avatar Modal -->
+  <div id="editAvatarModal" class="modal">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal('editAvatarModal')">&times;</button>
+      <h2>Edit Avatar</h2>
+      <form id="editAvatarForm" class="form">
+        <input type="hidden" name="id" id="editAvatarId">
+  
+        <label for="editAvatarName">Name:</label>
+        <input type="text" id="editAvatarName" name="name" class="input-field" required>
+  
+        <label for="editAvatarPersonality">Personality:</label>
+        <input type="text" id="editAvatarPersonality" name="personality" class="input-field" required>
+  
+       
+  
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn" onclick="closeModal('editAvatarModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+<script>
+    document.querySelectorAll('.delete-avatar').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.dataset.avatarId;
+            deleteAvatar(id);
+        });
+    });
+
+    document.getElementById("createAvatarForm")?.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const name = this.name.value;
+    const personality = this.personality.value;
+    const userId = this.userId.value;
+
+    try {
+      const res = await fetch("/avatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, personality, userId })
+      });
+
+      if (res.ok) {
+        alert("Avatar created successfully");
+        closeModal("createAvatarModal");
+        window.location.reload();
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error creating avatar");
+    }
+  });
+
+  // EDIT AVATAR
+  document.getElementById("editAvatarForm")?.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const id = this.id.value;
+    const name = this.name.value;
+    const personality = this.personality.value;
+    
+
+    try {
+      const res = await fetch(`/avatar/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, personality  })
+      });
+
+      if (res.ok) {
+        alert("Avatar updated successfully");
+        closeModal("editAvatarModal");
+        window.location.reload();
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating avatar");
+    }
+  });
+
+  document.getElementById("openCreateAvatar")?.addEventListener("click", function(e) {
+  e.preventDefault();
+  openModal("createAvatarModal");
+});
+
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+
+  // Function to open edit modal and fill fields
+  function openEditAvatarModal(avatar) {
+    document.getElementById("editAvatarId").value = avatar.id;
+    document.getElementById("editAvatarName").value = avatar.name;
+    document.getElementById("editAvatarPersonality").value = avatar.personality;
+    openModal("editAvatarModal");
+  }
+
+    
+    
+    function deleteAvatar(id) {
+        if (!confirm("Are you sure you want to delete this avatar?")) return;
+    
+        fetch(`/avatar/${Number(id)}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => {
+            if (res.ok) {
+                alert("Avatar deleted successfully");
+                location.reload();
+            } else {
+                res.text().then(text => alert("Error deleting avatar: " + text));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error deleting avatar");
+        });
+    }
+    </script>
+
+<style>
+tr:not(.no-hover):hover {
+    background-color: #DCD0FF !important;
+  }
+
+  .btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #6200ee;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #7e57ff;
+}
+
+.btn-danger {
+  color: red;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 80px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.1s ease;
+}
+
+.input-field:focus {
+    border-color: #6200ee;
+}
+
+/* Modal Content */
+.modal-content {
+    background: white;
+    margin: auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.1s ease-in-out;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    color: red;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: background 0.1s ease, color 0.1s ease;
+}
+
+.close:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: darkred;
+}
+
+/* Form Styling */
+.form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.1s ease;
+}
+.input-field:focus {
+    border-color: #6200ee;
+    outline: none;
+    box-shadow: 0 0 6px rgba(98,0,238,0.3);
+}
+
+/* Buttons */
+.btn-primary {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #6200ee;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+.btn-primary:hover {
+    background: #7e57ff;
+}
+
+/* Title */
+.modal-content h2 {
+    margin-top: 0;
+    color: #6200ee;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+  </style>

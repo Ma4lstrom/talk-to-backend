@@ -1,0 +1,139 @@
+<!-- views/auth/login.ejs -->
+
+<%- include('../layouts/partials/head', { title: 'Talk To' }) %>
+
+<!-- Put this outside of main content -->
+<div id="flash-container" style="position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: auto;">
+    <% if (messages && messages.length > 0) { %>
+      <% messages.forEach(function(msg) { %>
+        <div style="
+          padding: 10px 16px;
+          background-color: white;
+          color: #b91c1c;
+          border-left: 4px solid #f87171;
+          border-radius: 6px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          opacity: 1;
+          transition: opacity 0.5s ease-in-out;
+          font-size: 18px;
+          line-height: 1.4;
+        ">
+          <p style="margin: 0;"><%= msg %></p>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <% if (success && success.length > 0) { %>
+      <% success.forEach(function(msg) { %>
+        <div style="
+          padding: 10px 16px;
+          background-color: white;
+          color: #047857;
+          border-left: 4px solid #34d399;
+          border-radius: 6px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          opacity: 1;
+          transition: opacity 0.5s ease-in-out;
+          font-size: 18px;
+          line-height: 1.4;
+        ">
+          <p style="margin: 0;"><%= msg %></p>
+        </div>
+      <% }) %>
+    <% } %>
+</div>
+
+  
+  <script>
+    setTimeout(() => {
+      const flashes = document.getElementById('flash-container');
+      if (flashes) {
+        flashes.querySelectorAll('div').forEach(flash => {
+          flash.classList.replace('opacity-100', 'opacity-0');
+          setTimeout(() => flash.remove(), 500);
+        });
+      }
+    }, 3000);
+  </script>
+  
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
+      <!-- Register -->
+      <div class="card">
+        <div class="card-body">
+          <!-- Logo -->
+          <div class="app-brand justify-content-center">
+            <a href="/login" class="app-brand-link gap-2">
+              <span class="app-brand-logo demo">
+                <h1>Talk To</h1>
+                <!-- <img src="/assets/img/logo.png" alt="" style="background-color:rgb(46 81 124);"> -->
+              </span>
+              
+            </a>
+          </div>
+          <!-- /Logo -->
+
+          <p class="mb-4">Please sign-in to your account</p>
+
+          <form id="formAuthentication" class="mb-3" action="/auth/admin/login" method="POST">
+            
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email or Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="email" 
+                name="email"
+                autocomplete="email"
+                placeholder="Enter your email or username"
+                value=""
+                autofocus
+              />
+            </div>
+
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Password</label>
+              </div>
+              <div class="input-group input-group-merge">
+                <input 
+                  type="password" 
+                  id="password" 
+                  class="form-control" 
+                  name="password"
+                  placeholder="••••••••••••"
+                  aria-describedby="password"
+                  autocomplete="current-password"
+                />
+                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              </div>
+             
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  name="remember" 
+                  id="remember"
+                  
+                />
+                <label class="form-check-label" for="remember-me"> Remember Me </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/partials/footer') %>
