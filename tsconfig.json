@@ -22,10 +22,8 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "types": ["node", "express"],
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "typeRoots": ["./src/types", "./node_modules/@types"],
   },
   "include": ["src/**/*", "src/types/*.d.ts"],
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
+  
 }

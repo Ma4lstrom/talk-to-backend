@@ -36,6 +36,21 @@ export class AppController {
     return { host: host, hostname: hostName, body: Body.name, type: Body.type };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('admin/logout')
+  logout(@Req() req: Request, @Res() res: Response) {
+    req.session.destroy(err => {
+      if (err) {
+        console.error('Error destroying session:', err);
+      }
+      res.clearCookie('jwt');
+      res.clearCookie('connect.sid');
+      res.redirect('/login');
+    });
+  }
+
+
   @Get('login')
   getLogin(@Req() req: Request, @Res() res: Response) {
     res.render('auth/login', {
@@ -114,6 +129,11 @@ export class AppController {
       currentPath: '/admin/contact-us',
       user: req.user,
     });
+  }
+
+  @Get()
+  redirectToLogin(@Res() res: Response) {
+  return res.redirect('/login');
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
