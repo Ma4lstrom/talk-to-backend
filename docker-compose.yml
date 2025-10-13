@@ -1,16 +1,28 @@
 services:
-  app:
-    build: .
-    container_name: nest-app
+  talkto:
+    build: ./talk-to
+    container_name: talkTo
     restart: always
     ports:
-      - '3000:3000'
+      - "3000:3000"
     env_file:
-      - .env
+      - ./talk-to/.env
     depends_on:
       - db
     volumes:
-      - ./public:/usr/src/app/public
+      - ./talk-to/public:/usr/src/app/public
+  visionbuilder:
+    build: ./visionBuilder
+    container_name: visionBuilder
+    restart: always
+    ports:
+      - "3002:3000"
+    env_file:
+      - ./visionBuilder/.env
+    depends_on:
+      - db
+    volumes:
+      - ./visionBuilder/public:/usr/src/app/public
   db:
     image: postgres:16
     container_name: my_postgres
@@ -20,9 +32,10 @@ services:
       POSTGRES_PASSWORD: sR123456
       POSTGRES_DB: mydb
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:

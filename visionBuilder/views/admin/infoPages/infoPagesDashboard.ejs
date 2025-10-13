@@ -1,0 +1,263 @@
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+
+    <!-- Header with Search + Create Button -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <!-- Search Box -->
+        <!-- <form method="GET" action="/admin/info-pages" style="display: flex; gap: 5px;">
+          <input 
+            type="text" 
+            name="search" 
+            placeholder="Search pages..." 
+            value="<%= search %>"
+            style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;"
+          >
+          <button type="submit"
+            style="padding: 6px 12px; background: #6200ee; color: white; border: none; border-radius: 4px; cursor: pointer;"
+            onmouseover="this.style.backgroundColor='#7e57ff'"
+            onmouseout="this.style.backgroundColor='#6200ee'">
+            Search
+          </button>
+        </form> -->
+  
+        <!-- Create New Info Page Button -->
+        <a href="javascript:void(0)" onclick="openCreatePageModal()" 
+          style="padding: 6px 12px; background: #6200ee; color: white; border-radius: 4px; text-decoration: none; cursor: pointer;"
+          onmouseover="this.style.backgroundColor='#7e57ff'"
+          onmouseout="this.style.backgroundColor='#6200ee'">
+          Create New Info Page
+        </a>
+      </div>
+    </div>
+  
+    <!-- Info Pages Table -->
+    <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+      <thead style="background: #f5f5f5; text-align: left;">
+        <tr class="no-hover">
+          <th style="padding: 10px; border-bottom: 1px solid #ddd;">Id</th>
+          <th style="padding: 10px; border-bottom: 1px solid #ddd;">Name</th>
+          <th style="padding: 10px; border-bottom: 1px solid #ddd;">Body</th>
+          <th style="padding: 10px; border-bottom: 1px solid #ddd;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pages.forEach(page => { %>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px;"><%= page.id %></td>
+            <td style="padding: 10px;"><%= page.pageName %></td>
+            <td style="padding: 10px; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <%= page.pageBody %>
+            </td>
+            <td style="padding: 10px;">
+                <a href="javascript:void(0)" 
+                class="edit-btn"
+                data-id="<%= page.id %>"
+                data-name="<%- page.pageName %>"
+                data-slug="<%- page.slug %>"
+                data-body="<%= page.pageBody %>">
+                Edit
+             </a>
+              <span style="color: #ccc;">|</span>
+              <a href="javascript:void(0)"
+                onclick="deletePage(<%= page.id %>)"
+                style="color: red; text-decoration: none;"
+                onmouseover="this.style.textDecoration='underline'" 
+                onmouseout="this.style.textDecoration='none'">
+                Delete
+              </a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Create / Edit Info Page Modal -->
+  <div id="infoPageModal" class="modal">
+    <div class="modal-content">
+      <button class="close" onclick="closeModal('infoPageModal')">&times;</button>
+      <h2 id="infoPageModalTitle">Create New Info Page</h2>
+  
+      <form id="infoPageForm">
+        <input type="hidden" id="pageId" name="id">
+        
+        <label for="pageName">Page Name:</label>
+        <input type="text" id="pageName" name="pageName" class="input-field" required style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+        
+        <label for="pageName">Page Slug:</label>
+        <input type="text" id="pageSlug" name="pageSlug" class="input-field" required style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+        
+        <label for="pageBody">Page Body:</label>
+        <textarea style="z-index: inherit;" id="pageBody" name="pageBody"></textarea>
+  
+        <div style="display:flex; gap:10px; margin-top:20px; justify-content: flex-end;">
+          <button type="submit" class="btn btn-primary" style="padding: 8px 14px; background: #6200ee; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Save Page</button>
+          <button type="button" class="btn" onclick="closeModal('infoPageModal')" style="padding: 8px 14px; background: #f1f1f1; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- TinyMCE -->
+<!-- Place the first <script> tag in your HTML's <head> -->
+    <script src="https://cdn.tiny.cloud/1/4vywqbq09fyic2kc756jyizucml0k5qsaqi5y1ozemzlt3e8/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+
+    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+    <script>
+      tinymce.init({
+        selector: 'textarea',
+        plugins: [
+    'anchor', 'autolink', 'charmap', 'codesample', 'emoticons',
+    'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
+  ],
+  toolbar: 'undo redo | bold italic underline strikethrough | link media table | alignleft aligncenter alignright | bullist numlist | removeformat'
+,
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+          { value: 'First.Name', title: 'First Name' },
+          { value: 'Email', title: 'Email' },
+        ],
+      });
+    
+
+  
+  function openModal(id) {
+    document.getElementById(id).style.display = "block";
+  }
+  function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+  }
+  
+  // Open modal to create
+  function openCreatePageModal() {
+    document.getElementById("infoPageModalTitle").innerText = "Create New Info Page";
+    document.getElementById("pageId").value = "";
+    document.getElementById("pageName").value = "";
+    tinymce.get("pageBody").setContent(""); 
+    openModal("infoPageModal");
+  }
+  
+  // Open modal to edit
+  function openEditPageModal(page) {
+    document.getElementById("infoPageModalTitle").innerText = "Edit Info Page";
+    document.getElementById("pageId").value = page.id;
+    document.getElementById("pageSlug").value = page.slug;
+    document.getElementById("pageName").value = page.pageName;
+    tinymce.get("pageBody").setContent(page.pageBody);
+    openModal("infoPageModal");
+  }
+
+  document.querySelectorAll(".edit-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    openEditPageModal({
+      id: btn.dataset.id,
+      pageName: btn.dataset.name,
+      slug: btn.dataset.slug,
+      pageBody: btn.dataset.body
+    });
+  });
+});
+
+
+  function generateSlug(text) {
+  return text
+    .toString()
+    .toLowerCase()                  // lowercase
+    .trim()                         // remove leading/trailing spaces
+    .replace(/\s+/g, '-')           // replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // remove all non-word chars
+    .replace(/\-\-+/g, '-')         // collapse multiple -
+    .replace(/^-+/, '')             // remove leading -
+    .replace(/-+$/, '');            // remove trailing -
+}
+
+document.getElementById("pageName").addEventListener("input", function() {
+  document.getElementById("pageSlug").value = generateSlug(this.value);
+});
+  
+  // Save (create or update)
+  document.getElementById("infoPageForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const id = document.getElementById("pageId").value;
+    const pageName = document.getElementById("pageName").value;
+    const slug = document.getElementById("pageSlug").value;
+    const pageBody = tinymce.get("pageBody").getContent();
+  
+    try {
+      const res = await fetch(id ? `/info-pages/${id}` : "/info-pages", {
+        method: id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageName, slug, pageBody })
+      });
+  
+      if (res.ok) {
+        closeModal("infoPageModal");
+        window.location.reload();
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving page");
+    }
+  });
+  
+  // Delete
+  async function deletePage(id) {
+    if (!confirm("Are you sure you want to delete this page?")) return;
+    try {
+      const res = await fetch(`/info-pages/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting page");
+    }
+  }
+  </script>
+ <style>
+    .modal {
+      display:none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #fff; 
+      padding: 25px;
+      margin: 5% auto;
+      width: 70%;   /* wider modal */
+      max-width: 900px; 
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .close {
+      position: absolute; 
+      top: 10px; right: 15px;
+      background: none; 
+      border: none; 
+      font-size: 22px;
+      cursor: pointer;
+      color: #666;
+    }
+    .close:hover {
+      color: #000;
+    }
+    tr:not(.no-hover):hover {
+      background-color: #DCD0FF !important;
+    }
+    .tox-tinymce-aux,
+.tox-tinymce-inline,
+.tox-tinymce {
+  z-index: 10000 !important;
+}
+    </style>
+  

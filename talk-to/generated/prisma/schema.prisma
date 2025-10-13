@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  name     String
+  role     Role
+
+  deviceDetails Json?
+
+  avatars       Avatar[]
+  conversations Conversation[]
+
+  DeleteAccountRequest DeleteAccountRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletionStatus Boolean @default(false)
+}
+
+model Avatar {
+  id              Int    @id @default(autoincrement())
+  readyPlayerMeId String
+  name            String
+  personality     String
+  glbURL          String
+
+  conversations Conversation[]
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id])
+}
+
+model Conversation {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  avatarId Int
+
+  messages Message[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  avatar Avatar @relation(fields: [avatarId], references: [id])
+}
+
+enum ParticipantType {
+  USER
+  AVATAR
+}
+
+model Message {
+  id             Int             @id @default(autoincrement())
+  conversationId Int
+  userId         Int?
+  avatarId       Int?
+  senderType     ParticipantType
+  receiverType   ParticipantType
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  createdAt    DateTime     @default(now())
+}
+
+model DeleteAccountRequest {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model ContactUsRequest {
+  id      Int      @id @default(autoincrement())
+  email   String
+  message String
+  sentAt  DateTime @default(now())
+}
+
+model InfoPages {
+  id       Int    @id @default(autoincrement())
+  pageName String @unique
+  pageBody String
+  slug     String @unique
+}
